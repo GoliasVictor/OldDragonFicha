@@ -27,6 +27,7 @@ namespace OldDragon
         public Dado(uint qtFace) => QtFace = qtFace;
         
 
+        public static readonly Dado D0 = new Dado(0);
         public static readonly Dado D2 = new Dado(2);
         public static readonly Dado D3 = new Dado(3);
         public static readonly Dado D4 = new Dado(4);

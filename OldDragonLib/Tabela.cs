@@ -6,16 +6,24 @@ namespace OldDragon
 {
     public class Tabela<TKey>
     {
-        public delegate bool MetodoProcuraTabela(TKey key, Dictionary<string,object> Linha); 
+        public delegate bool MetodoVerificacaoLinha(TKey key, Dictionary<string,object> Linha); 
         readonly List<Dictionary<string,object>> tabela = new List<Dictionary<string,object>>();
-        readonly MetodoProcuraTabela VerificarLinha;
+        readonly MetodoVerificacaoLinha VerificarLinha;
         readonly List<string> Colunas;
-        public Tabela(MetodoProcuraTabela MetodoProcura,string[] Colunas,  object[][] Linhas = null)
+        public Tabela(MetodoVerificacaoLinha MetodoProcura,string[] Colunas,  object[][] Linhas = null)
         {
             VerificarLinha = MetodoProcura;
             this.Colunas = Colunas.ToList();
             if (!(Linhas is null))
                 InserirVariasLinhas(Linhas);
+            
+        }
+        public object Procurar(string Coluna, Predicate<Dictionary<string,object>> predicate)
+        {
+            var Res = from Linha in tabela
+            where predicate(Linha)
+            select Linha;
+            return Res.First()[Coluna];
         }
         public void InserirLinha( params object[] Linha)
         {

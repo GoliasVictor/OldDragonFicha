@@ -37,7 +37,7 @@ namespace OldDragonUwp
 
         public MainPage()
         {
-            personagem = new Personagem("dougras", Raca.Racas["ElfoNegro"], new Mago(), 30000, atributos: new Atributos(10, 14, 11, 16, 9, 7));
+            personagem = new Personagem("dougras", Raca.Racas["ElfoNegro"], Classe.Mago, 30000, atributos: new Atributos(10, 14, 11, 16, 9, 7));
             personagem.Iventario.Itens.AddRange(new List<Item>() {
                 new Protecao("Armadura de placas", 13, 7, 3, -2, true, 300),
                 new Protecao("Escudo madeira", 2, 1, Preco: 3),

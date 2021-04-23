@@ -30,8 +30,7 @@ namespace OldDragon
             {"Halfling"     ,new Raca("Halfing"  ,6,new ModAtributo(For:-2,Des: 2))}
         };
     }
-
-
+     
     public class Personagem
     {
 
@@ -39,12 +38,14 @@ namespace OldDragon
         public Raca Raca;
         public uint XP;
         public int DadosVida;
-        public IClasse Classe;
+        public Classe Classe;
         public Iventario Iventario = new Iventario();
         public List<int> BonusCAOutros = new List<int>();
+        public uint Nivel => Classe.Nivel(XP);
+        public uint JP => Classe.JogadaProtecao(Nivel);
+        public (uint BonusMaoPrincipal, uint BonusMaoSecundaria) BA => Classe.BaseAtaque(Nivel); 
         public Atributos AtributosBase { get; private set;}
         public Atributos Atributos { get => AtributosBase + Raca.ModAtributos;   set => AtributosBase = value - Raca.ModAtributos; }
-         
         public int CA
         {
             get 
@@ -74,17 +75,15 @@ namespace OldDragon
                                                select ((Protecao)Item).ReducaoMovimento).Sum();
             }
         }
-        public uint Nivel => Classe.Nivel(XP);
         //atributos 
-
-
-        public Personagem(string nome, Raca raca, IClasse classe, uint xp, int? dadosVida = null, Atributos? atributos = null)
+          
+        public Personagem(string nome, Raca raca, Classe classe, uint xp, int? dadosVida = null, Atributos? atributos = null)
         {
             Nome = nome;
             Raca = raca;
             Classe = classe;
             XP = xp;
-            DadosVida = dadosVida is null ? Classe.DadoVida.Rolar(Nivel).Sum() : (int)dadosVida;
+            DadosVida = dadosVida is null ? Classe.DadoVida(Nivel).Rolar() : (int)dadosVida;
             AtributosBase = atributos is null ? Atributos.GerarAtributos() : (Atributos)atributos;
         }
 
