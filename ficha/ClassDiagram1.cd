@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="OldDragon.Raca" Collapsed="true">
+    <Position X="14.75" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAggAAAAAAAAAAAAAFAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Personagem" Collapsed="true">
+    <Position X="16.5" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAEABBgAAAAAAIAIAAAAAAABAAAAAAAAAAAFAQAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Program" Collapsed="true">
+    <Position X="18.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Itens.Iventario" Collapsed="true">
+    <Position X="18.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAACAAAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Itens.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Itens.ItemIventario" Collapsed="true">
+    <Position X="5.5" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQAAAAAAAIAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Itens.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Itens.ItemIventarioEstacado" Collapsed="true">
+    <Position X="5.5" Y="4.75" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Itens.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Itens.Item" Collapsed="true">
+    <Position X="1.75" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAA=</HashCode>
+      <FileName>Itens.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Itens.Arma" Collapsed="true">
+    <Position X="0.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAgAAAAAAAAAIAAAAAAAAABAAAAAAAACQ=</HashCode>
+      <FileName>Itens.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Itens.Protecao" Collapsed="true">
+    <Position X="2.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAQQAAAAAAAAkAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Itens.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Dado" Collapsed="true">
+    <Position X="16.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAABAAAAAAAAAAAAAAAAQAAAAgAAIAAAAAAEEBAA=</HashCode>
+      <FileName>Dado.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Rolagem" Collapsed="true">
+    <Position X="16.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAgAAAAGAAAAAAAAAAAAAAAABAAAAAABBAA=</HashCode>
+      <FileName>Dado.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Atributo.Atributo" Collapsed="true">
+    <Position X="6.5" Y="0.5" Width="1.5" />
+    <NestedTypes>
+      <Struct Name="OldDragon.Atributo.Atributo.LinhaAtributos" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Atributo.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEBAAAAAwEAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>Atributo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Classes" Collapsed="true">
+    <Position X="14.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Classes.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Atributo.Forca" Collapsed="true">
+    <Position X="3.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Atributo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Atributo.Destreza" Collapsed="true">
+    <Position X="7.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAAAAAAAAEgAAAAAAAAAAAgAAAAAAAAAA=</HashCode>
+      <FileName>Atributo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Classes.Mago" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="14.75" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAIAAIAABAAAAAAAAABAAAEAAAA=</HashCode>
+      <FileName>Classes.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="OldDragon.Atributo.Constituicao" Collapsed="true">
+    <Position X="10" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Atributo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Atributo.Inteligencia" Collapsed="true">
+    <Position X="12.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Atributo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Atributo.Sabedoria" Collapsed="true">
+    <Position X="1" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Atributo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OldDragon.Atributo.Carisma" Collapsed="true">
+    <Position X="5.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAgAAEAAA=</HashCode>
+      <FileName>Atributo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="OldDragon.Atributo.Atributos" Collapsed="true">
+    <Position X="14.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAQABACAQAAAAAAAIAEAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Atributo.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="OldDragon.Atributo.ModAtributo" Collapsed="true">
+    <Position X="16.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQABACAAAAAAAAAIAEAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Atributo.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="OldDragon.Classes.IClasse" Collapsed="true">
+    <Position X="14.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAABAAAAAAAAAIAAIAABAAAAAAAAABAAAEAAAA=</HashCode>
+      <FileName>Classes.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="OldDragon.Itens.TamanhoArma" Collapsed="true">
+    <Position X="14.75" Y="6" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAJAAAA=</HashCode>
+      <FileName>Itens.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
