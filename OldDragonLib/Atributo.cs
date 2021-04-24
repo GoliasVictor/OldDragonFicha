@@ -166,8 +166,18 @@ namespace OldDragon
         }
         public class Forca : Atributo
         {
-            public static DataTable Tabela;
+            public  (int CargaLeve, int CargaPesada, int CargaMaxima)CapacidadeCarga
+            {
+                get
+                {
+                    var CapacidadeCarga = Tabelas.CapacidadeCarga[Valor];
+                    return((int)CapacidadeCarga["CargaMaxima"],
+                           (int)CapacidadeCarga["CargaPesada"],
+                           (int)CapacidadeCarga["CargaLeve"]);
+                }
+            }
 
+            public static DataTable Tabela; 
             public Forca(uint valor) : base(valor) {}
         }
 

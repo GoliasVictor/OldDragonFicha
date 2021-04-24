@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OldDragon.Atributo;
-using OldDragon.Itens;
-using OldDragon.Classes;
+using OldDragon.Itens; 
 
 namespace OldDragon
 {
+    public enum Alinhamento {Ordeiro,Neutro,Caotico}
+    public enum Carga { SemCarga, CargaLeve,CargaPesada,CargaMaxima}
     public class Raca
     {
         public string Nome { get; }
@@ -20,8 +21,7 @@ namespace OldDragon
             Movimento = movimento;
             ModAtributos = Mod;
 
-        }
-
+        } 
         public static Dictionary<string, Raca> Racas = new Dictionary<string, Raca>(){
             {"Humano"       ,new Raca("Humano"   ,9,new ModAtributo())} ,
             {"Anao"         ,new Raca("Anão"     ,6,new ModAtributo(Con: 2,Car:-2))} ,
@@ -38,13 +38,16 @@ namespace OldDragon
         public Raca Raca;
         public uint XP;
         public int DadosVida;
+        public Alinhamento Alinhamento;
         public Classe Classe;
+        public Atributos AtributosBase;
         public Iventario Iventario = new Iventario();
         public List<int> BonusCAOutros = new List<int>();
         public uint Nivel => Classe.Nivel(XP);
+        public Dado DV => Classe.DadoVida(Nivel).Dado;
+        public int PV => DadosVida + Atributos.Con.Ajuste;
         public uint JP => Classe.JogadaProtecao(Nivel);
-        public (uint BonusMaoPrincipal, uint BonusMaoSecundaria) BA => Classe.BaseAtaque(Nivel); 
-        public Atributos AtributosBase { get; private set;}
+        public (uint BonusMaoPrincipal, uint BonusMaoSecundaria) BA => Classe.BaseAtaque(Nivel);
         public Atributos Atributos { get => AtributosBase + Raca.ModAtributos;   set => AtributosBase = value - Raca.ModAtributos; }
         public int CA
         {
@@ -53,10 +56,9 @@ namespace OldDragon
                 
                 var CA = 10;
                 int BonusDes = Atributos.Des.Ajuste;
-                var ItensProtecao = from Item in Iventario.Itens
+                var ItensProtecao = from Item in Iventario
                                     where Item is Protecao && ((Protecao)Item).Usando
-                                    select (Protecao)Item;
-
+                                    select (Protecao)Item; 
                 foreach (Protecao protecao in ItensProtecao)
                 {
                     CA += protecao.BonusCa;
@@ -70,21 +72,58 @@ namespace OldDragon
         {
             get
             {
-                return Raca.Movimento + (uint)(from Item in Iventario.Itens
-                                               where Item is Protecao
-                                               select ((Protecao)Item).ReducaoMovimento).Sum();
+                if (CapacidadeCarga == Carga.CargaMaxima)
+                    return 1;
+
+                return  (uint)(Raca.Movimento + (int)RedMovimento
+                    + ((uint)Iventario.Where(Item => Item is Protecao).Select(Item => ((Protecao)Item).ReducaoMovimento).Sum()));
             }
         }
-        //atributos 
-          
-        public Personagem(string nome, Raca raca, Classe classe, uint xp, int? dadosVida = null, Atributos? atributos = null)
+        public Carga CapacidadeCarga
+        {
+            get
+            {
+                var (CargaLeve, CargaPesada, CargaMaxima) = Atributos.For.CapacidadeCarga;
+                var PesoTotal = Iventario.PesoTotal;
+                if (PesoTotal >= CargaMaxima)
+                    return Carga.CargaMaxima;
+                if (PesoTotal >= CargaPesada)
+                    return Carga.CargaPesada;
+                if (PesoTotal >= CargaLeve)
+                    return Carga.CargaLeve;
+                else return Carga.SemCarga;
+            }
+        }
+        public int? RedMovimento
+        {
+            get
+            {
+                switch (CapacidadeCarga)
+                {
+                    case Carga.CargaLeve:
+                        return 0;
+                    case Carga.SemCarga:
+                        return -1;
+                    case Carga.CargaPesada:
+                        return -2;
+                    case Carga.CargaMaxima:
+                    default:
+                        return null;
+                }
+            }
+        }
+
+
+        public Personagem(string nome, Raca raca, Classe classe, uint xp, Alinhamento alinhamento, int? dadosVida = null, Atributos? atributos = null,Iventario iventario = default)
         {
             Nome = nome;
             Raca = raca;
             Classe = classe;
             XP = xp;
-            DadosVida = dadosVida is null ? Classe.DadoVida(Nivel).Rolar() : (int)dadosVida;
-            AtributosBase = atributos is null ? Atributos.GerarAtributos() : (Atributos)atributos;
+            Alinhamento = alinhamento;
+            DadosVida = dadosVida ?? Classe.DadoVida(Nivel).Rolar();
+            AtributosBase = atributos ?? Atributos.GerarAtributos();
+            Iventario = iventario ?? new Iventario();
         }
 
     }
