@@ -21,21 +21,30 @@ namespace OldDragon
         {
             Dictionary<string, object> DadosClasseNivel = TabelaClasse[Nivel];
             foreach (var tabela in OutrasTabelas)
-                DadosClasseNivel = DadosClasseNivel.Concat(tabela.Value[Nivel]).ToDictionary((k) => k.Key, v => v.Value);
+                DadosClasseNivel = DadosClasseNivel.Concat(tabela.Value[Nivel])
+                                                   .ToDictionary((k) => k.Key, v => v.Value);
             return DadosClasseNivel;
         }
         public Classe(string Nome, object[][] TabelaClasse, params (string Nome, Tabela<uint> tabela)[] OutrasTabelas)
         {
+            if (string.IsNullOrWhiteSpace(Nome))
+                throw new ArgumentException("Nome em branco ou nulo", nameof(Nome));
+
+            if (TabelaClasse is null)
+                throw new ArgumentNullException(nameof(TabelaClasse));
+
             this.Nome = Nome;
             this.TabelaClasse.InserirVariasLinhas(TabelaClasse);
             foreach (var Tabela in OutrasTabelas)
                 this.OutrasTabelas.Add(Tabela.Nome, Tabela.tabela);
-        }
-
+        } 
+    }
+    public static class Classes
+    {
         public static readonly Classe HomemDeArmas = new Classe("HomemDeArmas", Tabelas.HomemDeArmas);
         public static readonly Classe Ladino = new Classe("Ladino", Tabelas.Ladino, ("TalentosLadrao", Tabelas.TaletosLadrao));
         public static readonly ClasseUsuariaMagia Clerigo = new ClasseUsuariaMagia("Clerigo", Tabelas.Clerigo, Tabelas.MagiasClerigo, ("AfastarDadosvidaMortoVivo", Tabelas.AfastarDadosvidaMortoVivo));
-        public static readonly ClasseUsuariaMagia Mago    = new ClasseUsuariaMagia("Mago"   , Tabelas.Mago, Tabelas.MagiasMago);
+        public static readonly ClasseUsuariaMagia Mago = new ClasseUsuariaMagia("Mago", Tabelas.Mago, Tabelas.MagiasMago);
     }
     public class ClasseUsuariaMagia : Classe
     {
@@ -46,7 +55,7 @@ namespace OldDragon
         public ClasseUsuariaMagia(string Nome, object[][] TabelaClasse, uint[][] TabelaMagias, params (string Nome, Tabela<uint> tabela)[] OutrasTabelas)
             : base(Nome, TabelaClasse, OutrasTabelas)
         {
-            this.TabelaMagias = TabelaMagias;
+            this.TabelaMagias = TabelaMagias ?? throw new ArgumentNullException(nameof(TabelaMagias));
         }
     }
     public class Especializacao
@@ -55,26 +64,29 @@ namespace OldDragon
         public string Descricao;
         public Alinhamento? Alinhamento;
         public Classe Classe;
-        public Especializacao(string Nome, Classe Classe, string Descricao = "", Alinhamento? Alinhamento = null)
+        public Especializacao(string nome, Classe classe, string descricao = default, Alinhamento? alinhamento = default)
         {
-            this.Nome = Nome;
-            this.Classe = Classe;
-            this.Descricao = Descricao;
-            this.Alinhamento = Alinhamento;
+            if (string.IsNullOrWhiteSpace(nome))
+                throw new ArgumentException("message", nameof(nome));
+            
+            Nome = nome;
+            Classe = classe ?? throw new ArgumentNullException(nameof(classe));
+            Descricao = descricao;
+            Alinhamento = alinhamento;
         }
         public static readonly Dictionary<string, Especializacao> Especializacoes = new Dictionary<string, Especializacao>(){
-            { "Druida"      , new Especializacao("Druida"     , Classe.Clerigo)},
-            { "Cultista"    , new Especializacao("Cultista"   , Classe.Clerigo, Alinhamento: OldDragon.Alinhamento.Caotico)},
-            { "Cacador"     , new Especializacao("Cacador"    , Classe.Clerigo)},
-            { "Paladino"    , new Especializacao("Paladino"   , Classe.HomemDeArmas,Alinhamento: OldDragon.Alinhamento.Ordeiro)},
-            { "Guerreiro"   , new Especializacao("Guerreiro"  , Classe.HomemDeArmas)},
-            { "Barbaro"     , new Especializacao("Barbaro"    , Classe.HomemDeArmas)},
-            { "Ranger"      , new Especializacao("Ranger"     , Classe.Ladino)},
-            { "Bardo"       , new Especializacao("Bardo"      , Classe.Ladino)},
-            { "Assassino"   , new Especializacao("Assassino"  , Classe.Ladino)},
-            { "Ilusionista" , new Especializacao("Ilusionista", Classe.Mago)},
-            { "Necromante"  , new Especializacao("Necromante" , Classe.Mago, Alinhamento: OldDragon.Alinhamento.Ordeiro)},
-            { "Adivinhador" , new Especializacao("Adivinhador", Classe.Mago)}
+            { "Druida"      , new Especializacao("Druida"     , Classes.Clerigo)},
+            { "Cultista"    , new Especializacao("Cultista"   , Classes.Clerigo, alinhamento: OldDragon.Alinhamento.Caotico)},
+            { "Cacador"     , new Especializacao("Cacador"    , Classes.Clerigo)},
+            { "Paladino"    , new Especializacao("Paladino"   , Classes.HomemDeArmas,alinhamento: OldDragon.Alinhamento.Ordeiro)},
+            { "Guerreiro"   , new Especializacao("Guerreiro"  , Classes.HomemDeArmas)},
+            { "Barbaro"     , new Especializacao("Barbaro"    , Classes.HomemDeArmas)},
+            { "Ranger"      , new Especializacao("Ranger"     , Classes.Ladino)},
+            { "Bardo"       , new Especializacao("Bardo"      , Classes.Ladino)},
+            { "Assassino"   , new Especializacao("Assassino"  , Classes.Ladino)},
+            { "Ilusionista" , new Especializacao("Ilusionista", Classes.Mago)},
+            { "Necromante"  , new Especializacao("Necromante" , Classes.Mago, alinhamento: OldDragon.Alinhamento.Ordeiro)},
+            { "Adivinhador" , new Especializacao("Adivinhador", Classes.Mago)}
         };
     }
 }

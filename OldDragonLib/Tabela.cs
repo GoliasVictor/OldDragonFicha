@@ -13,19 +13,26 @@ namespace OldDragon
         readonly List<string> Colunas;
         public Tabela(MetodoVerificacaoLinha MetodoProcura,string[] Colunas,  object[][] Linhas = null)
         {
-            VerificarLinha = MetodoProcura;
-            this.Colunas = Colunas.ToList();
+
+            VerificarLinha = MetodoProcura   ?? throw new ArgumentNullException(nameof(MetodoProcura));
+            this.Colunas = Colunas?.ToList() ?? throw new ArgumentNullException(nameof(Colunas)); ;
             if (!(Linhas is null))
                 InserirVariasLinhas(Linhas); 
         }
         public object Procurar(string Coluna, Predicate<Dictionary<string,object>> predicate)
         {
+            if (predicate is null)
+                throw new ArgumentNullException(nameof(predicate));
+
             return tabela.Where(Linha => predicate(Linha)).FirstOrDefault()[Coluna];
         }
         public void InserirLinha( params object[] Linha)
         {
+            if (Linha is null)
+                throw new ArgumentNullException(nameof(Linha));
             if (Linha.Length != Colunas.Count)
                 throw new ArgumentOutOfRangeException();
+            
             var LinhaNomeada = new Dictionary<string, object>();
 
             for (int i = 0; i < Linha.Length; i++)
@@ -35,6 +42,8 @@ namespace OldDragon
         }
         public void InserirVariasLinhas( object[][] Linhas)
         {
+            if (Linhas is null)
+                throw new ArgumentNullException(nameof(Linhas));
             foreach (var Linha in Linhas) 
                 InserirLinha(Linha);
         }
@@ -53,7 +62,49 @@ namespace OldDragon
     }
     public static class Tabelas
     {
+
         public static bool VerificaoNivel(uint Nivel, Dictionary<string, object> Linha) => Nivel == (int)Linha["Nivel"];
+        public static bool VerificaoAtributo(uint i, Dictionary<string, object> Linha)
+        {
+            if (Linha is null)
+                throw new ArgumentNullException(nameof(Linha));
+
+            var Atributo = ((int Min, int Max))Linha["Atributo"];
+            return Atributo.Min >= i || Atributo.Max <= i;
+        }
+        public static Tabela<uint> TabelaAtributos;
+        public static string[] CabecarioTabelaAtributos =
+{
+                    "Atributo",
+                    "Ajuste",
+                    "Armadilhas",
+                    "Arrombar",
+                    "FurtividadEPungar",
+                    "ChanceRessureicao",
+                    "IdiomasAdicionais",
+                    "ChanceAprenderMagia",
+                    "MagiasAdicionais",
+                    "NumeroSeguidores",
+                    "AjusteReacao",
+                    "QtMortoVivoAfastado"
+                };
+        public static object[][] CorpoTabelaAtributos = new object[][] {
+                    new object[]{( 0, 1), -5, -25, -25, -25,  0, 0, 0,(0,0,0), 0,-25, new Rolagem(0, 0)},
+                    new object[]{( 2, 3), -4, -20, -20, -20,  0, 0, 0,(0,0,0), 0,-20, new Rolagem(0, 0)},
+                    new object[]{( 4, 5), -3, -15, -15, -15,  0, 0, 0,(0,0,0), 0,-15, new Rolagem(0, 0)},
+                    new object[]{( 6, 7), -2, -10, -10, -10,  1, 0, 0,(0,0,0), 0,-10, new Rolagem(0, 0)},
+                    new object[]{( 8, 9), -1,  -5,  -5,  -5,  5, 1, 5,(0,0,0), 0, -5, new Rolagem(1   )},
+                    new object[]{(10,11),  0,   0,   0,   0, 10, 1,10,(0,0,0), 1,  0, new Rolagem(D2  )},
+                    new object[]{(12,13), +1,   0,  +5,   0, 25, 1,20,(0,0,0), 2, +5, new Rolagem(D3  )},
+                    new object[]{(14,15), +2,   0, +10,  +5, 50, 1,25,(0,0,0), 3,+10, new Rolagem(D4  )},
+                    new object[]{(16,17), +3,  +5, +15, +10, 75, 2,35,(1,0,0), 4,+15, new Rolagem(D6  )},
+                    new object[]{(18,19), +4, +10, +20, +15, 95, 3,45,(2,0,0), 5,+20, new Rolagem(D8  )},
+                    new object[]{(20,21), +5, +15, +25, +20,100, 4,55,(2,1,0), 6,+25, new Rolagem(D4,2)},
+                    new object[]{(22,23), +6, +20, +30, +25,100, 5,65,(2,2,0), 7,+30, new Rolagem(D10 )},
+                    new object[]{(24,25), +7, +25, +35, +30,100, 6,75,(2,2,1), 8,+35, new Rolagem(D12 )},
+                    new object[]{(26,27), +8, +30, +40, +35,100, 7,85,(3,2,1), 9,+40, new Rolagem(D6,2)},
+                    new object[]{(28,29), +9, +35, +45, +40,100, 8,95,(3,3,1),10,+45, new Rolagem(D20 )}
+                };
         public static object[][] HomemDeArmas = new object[][] {
                     new object[]{1 ,       0, new Rolagem(D10, 1, 0), (+1 , 0), 16},
                     new object[]{2 ,    2000, new Rolagem(D10, 2, 0), (+2 , 0), 16},
@@ -254,8 +305,10 @@ namespace OldDragon
         
         static Tabelas()
         {
-            AfastarDadosvidaMortoVivo = new Tabela<uint>(VerificaoNivel, CabecarioAfastarDadosVidaMortoVivo, CorpoAfastarDadosvidaMortoVivo);
-            TaletosLadrao = new Tabela<uint>(VerificaoNivel, CabecarioTalentosLadrao, CorpoTalentosLadrao);
+            AfastarDadosvidaMortoVivo = new Tabela<uint>(VerificaoNivel   , CabecarioAfastarDadosVidaMortoVivo, CorpoAfastarDadosvidaMortoVivo);
+            TaletosLadrao             = new Tabela<uint>(VerificaoNivel   , CabecarioTalentosLadrao           , CorpoTalentosLadrao);
+            TabelaAtributos           = new Tabela<uint>(VerificaoAtributo, CabecarioTabelaAtributos          , CorpoTabelaAtributos);
+
         }
     }
 

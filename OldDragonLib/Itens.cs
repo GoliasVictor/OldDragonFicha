@@ -18,9 +18,9 @@ namespace OldDragon
             public Iventario() : base() { }
             public Iventario(IEnumerable<Item> itens) : base() => AddRange(itens);
             public void AddRange(IEnumerable <Item> itens)
-            {
-                foreach (Item item in itens)
-                    Add(item);
+            {  
+                foreach (Item item in itens ?? throw new ArgumentNullException(nameof(itens)))
+                    Add(item?? throw new ArgumentNullException(nameof(itens)));
             }
         }
 
@@ -79,7 +79,10 @@ namespace OldDragon
 
             public Item(string nome, double peso, Dinheiro? preco = default, uint quantidade = 1)
             {
-                Nome = nome;
+                if (string.IsNullOrWhiteSpace(nome))
+                    throw new ArgumentException("message", nameof(nome));
+
+                Nome = nome  ;
                 Peso = peso;
                 Preco = preco;
                 Quantidade = quantidade;
@@ -113,7 +116,8 @@ namespace OldDragon
             public HashSet<TipoArma> Tipo;
             public (uint Min, uint Multiplicador) Critico = (20, 2);
             public Arma(string Nome, double Peso, Rolagem Dano, TamanhoArma Tamanho, HashSet<TipoArma> Tipo,
-                        AlcanceArma? Alcance = default, TipoRecarga? Recarga = default, string Especial = default, Dinheiro? Preco = default, uint Quantidade = 1) : base(Nome, Peso, Preco, Quantidade)
+                        AlcanceArma? Alcance = default, TipoRecarga? Recarga = default, string Especial = default,
+                        Dinheiro? Preco = default, uint Quantidade = 1) : base(Nome, Peso, Preco, Quantidade)
             {
                 this.Dano = Dano;
                 this.Tamanho = Tamanho;
@@ -132,7 +136,10 @@ namespace OldDragon
 
             public AlcanceArma(string tipo, uint? minimo, uint? medio, uint? maximo)
             {
-                Tipo = tipo ?? throw new ArgumentNullException(nameof(tipo));
+                if (string.IsNullOrWhiteSpace(tipo))
+                    throw new ArgumentException("message", nameof(tipo));
+
+                Tipo = tipo  ;
                 Minimo = minimo;
                 Medio = medio;
                 Maximo = maximo;
@@ -144,12 +151,14 @@ namespace OldDragon
             public readonly string Descricao;
             internal TipoArma(string Sigla, string Descricao)
             {
+                if (string.IsNullOrWhiteSpace(Descricao))
+                    throw new ArgumentException("message", nameof(Descricao));
+
                 this.Sigla = Sigla;
                 this.Descricao = Descricao;
                 TiposArma.ConjuntoTiposArma.Add(this);
             }
             public static implicit operator HashSet<TipoArma>(TipoArma TipoArma) => new HashSet<TipoArma> { TipoArma };
- 
         }
         public static class TiposArma
         {

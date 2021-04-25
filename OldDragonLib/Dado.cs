@@ -37,7 +37,7 @@ namespace OldDragon
         public static readonly Dado D12 = new Dado(12);
         public static readonly Dado D20 = new Dado(20);
     }
-    public class Rolagem
+    public struct Rolagem
     {
         public Dado Dado;
         public uint QtRolagens;
@@ -49,7 +49,7 @@ namespace OldDragon
                 Resultado += (int)Dado.Rolar() + 1;
             return Resultado + Modificador;
         }
-        public virtual IEnumerable<int> Rolar(uint Qt)
+        public IEnumerable<int> Rolar(uint Qt)
         {
             for (int i = 0; i < Qt; i++)
                 yield return Rolar();

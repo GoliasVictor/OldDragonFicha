@@ -15,8 +15,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using static OldDragon.Dado;
-using OldDragon;
-using OldDragon.Classes;
+using OldDragon; 
 using OldDragon.Itens;
 using OldDragon.Atributo;
 // O modelo de item de Página em Branco está documentado em https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x416
@@ -37,13 +36,13 @@ namespace OldDragonUwp
 
         public MainPage()
         {
-            personagem = new Personagem("dougras", Raca.Racas["ElfoNegro"], Classe.Mago, 30000, atributos: new Atributos(10, 14, 11, 16, 9, 7));
-            personagem.Iventario.Itens.AddRange(new List<Item>() {
-                new Protecao("Armadura de placas", 13, 7, 3, -2, true, 300),
-                new Protecao("Escudo madeira", 2, 1, Preco: 3),
-                new Arma("Adaga", 1, D4, TamanhoArma.G, "CO/PE"),
-                new Arma("Espada", 1, D8, TamanhoArma.M, "CO"),
-                new Arma("Flecha", 0.1, D6, TamanhoArma.P, "PE",Quantidade:20)
+            personagem = new Personagem("dougras", Raca.Racas["ElfoNegro"], Classes.Mago, 30000,Alinhamento.Caotico, atributos: new Atributos(10, 14, 11, 16, 9, 7));
+            personagem.Iventario.AddRange(new List<Item>() {
+                new Protecao("Armadura de placas", 13, 7, 3, -2, true,new Dinheiro(300,Moedas.PO)),
+                new Protecao("Escudo madeira", 2, 1, Preco: new Dinheiro(3,Moedas.PO)),
+                new Arma("Adaga", 1, D4, TamanhoArma.G, new HashSet<TipoArma>(){ TiposArma.Pe,TiposArma.Co}),
+                new Arma("Espada", 1, D8, TamanhoArma.M, TiposArma.Co),
+                new Arma("Flecha", 0.1, D6, TamanhoArma.P, TiposArma.Pe,Quantidade:20)
             });
 
             DataContext = personagem;

@@ -18,7 +18,7 @@ namespace OldDragobTeste
         {
             personagem = new Personagem("dougras",
                                         Raca.Racas["ElfoNegro"],
-                                        Classe.Mago,
+                                        Classes.Mago,
                                         30000,
                                         Alinhamento.Caotico,
                                         atributos: new Atributos(10, 14, 11, 16, 9, 7),
@@ -33,7 +33,7 @@ namespace OldDragobTeste
             Console.WriteLine(personagem.CapacidadeCarga);
         }
         [TestMethod]
-        public void Classes()
+        public void TestClasses()
         {
             var testClase = new ClasseUsuariaMagia("Jubiscreuson",
                                                    Tabelas.HomemDeArmas,

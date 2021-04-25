@@ -17,6 +17,9 @@ namespace OldDragon
         public ModAtributo ModAtributos { get; }
         Raca(string nome, uint movimento, ModAtributo Mod)
         {
+            if (string.IsNullOrWhiteSpace(nome))
+                throw new ArgumentException("message", nameof(nome));
+
             Nome = nome;
             Movimento = movimento;
             ModAtributos = Mod;
@@ -76,7 +79,7 @@ namespace OldDragon
                     return 1;
 
                 return  (uint)(Raca.Movimento + (int)RedMovimento
-                    + ((uint)Iventario.Where(Item => Item is Protecao).Select(Item => ((Protecao)Item).ReducaoMovimento).Sum()));
+                    + ((uint)Iventario.Where(Item => Item is Protecao).Select(Item => ((Protecao)Item)?.ReducaoMovimento ?? 0).Sum()));
             }
         }
         public Carga CapacidadeCarga
@@ -85,12 +88,9 @@ namespace OldDragon
             {
                 var (CargaLeve, CargaPesada, CargaMaxima) = Atributos.For.CapacidadeCarga;
                 var PesoTotal = Iventario.PesoTotal;
-                if (PesoTotal >= CargaMaxima)
-                    return Carga.CargaMaxima;
-                if (PesoTotal >= CargaPesada)
-                    return Carga.CargaPesada;
-                if (PesoTotal >= CargaLeve)
-                    return Carga.CargaLeve;
+                if (PesoTotal >= CargaMaxima) return Carga.CargaMaxima;
+                if (PesoTotal >= CargaPesada) return Carga.CargaPesada;
+                if (PesoTotal >= CargaLeve  ) return Carga.CargaLeve;
                 else return Carga.SemCarga;
             }
         }
@@ -100,25 +100,24 @@ namespace OldDragon
             {
                 switch (CapacidadeCarga)
                 {
-                    case Carga.CargaLeve:
-                        return 0;
-                    case Carga.SemCarga:
-                        return -1;
-                    case Carga.CargaPesada:
-                        return -2;
+                    case Carga.CargaLeve:  return 0;
+                    case Carga.SemCarga:   return -1;
+                    case Carga.CargaPesada:return -2;
                     case Carga.CargaMaxima:
-                    default:
-                        return null;
+                    default: return null;
                 }
             }
         }
 
 
-        public Personagem(string nome, Raca raca, Classe classe, uint xp, Alinhamento alinhamento, int? dadosVida = null, Atributos? atributos = null,Iventario iventario = default)
+        public Personagem(string nome, Raca raca, Classe classe, uint xp, Alinhamento alinhamento, int? dadosVida = null,
+                          Atributos? atributos = null, Iventario iventario = default)
         {
+            if (string.IsNullOrWhiteSpace(nome))
+                 throw new ArgumentException("Nome nulo ou em branco.", nameof(nome));
             Nome = nome;
-            Raca = raca;
-            Classe = classe;
+            Raca = raca ?? throw new ArgumentNullException(nameof(raca));
+            Classe = classe ?? throw new ArgumentNullException(nameof(classe));
             XP = xp;
             Alinhamento = alinhamento;
             DadosVida = dadosVida ?? Classe.DadoVida(Nivel).Rolar();
