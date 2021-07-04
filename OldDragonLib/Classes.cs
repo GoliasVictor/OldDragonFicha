@@ -12,7 +12,7 @@ namespace OldDragon
         protected Dictionary<string, Tabela<uint>> OutrasTabelas = new Dictionary<string, Tabela<uint>>();
 
         public string Nome { get; }
-        public uint Nivel(uint Xp) => (uint)((int)(TabelaClasse.Procurar("Nivel", (Linha) => (int)Linha["XP"] >= Xp)) - 1);
+        public uint Nivel(uint Xp) => (uint)((int)(TabelaClasse.Procurar("Nivel", (Linha) => (int)Linha["XP"] > Xp)) - 1);
         public uint Experiencia(uint Nivel) => (uint)(int)TabelaClasse[Nivel]["XP"];
         public Rolagem DadoVida(uint Nivel) => (Rolagem)TabelaClasse[Nivel]["DV"];
         public uint JogadaProtecao(uint Nivel) => (uint)(int)TabelaClasse[Nivel]["JP"];
