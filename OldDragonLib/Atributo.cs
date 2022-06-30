@@ -5,153 +5,70 @@ using System.Threading.Tasks;
 using System.Data;
 using System.ComponentModel;
 using static OldDragon.Dado;
+using static OldDragon.Tabelas;
 
 namespace OldDragon
 {
-    namespace Atributo
-    {
+	namespace Atributo
+	{
 
-        public struct Atributos
-        {
-            public readonly Forca For;
-            public readonly Destreza Des;
-            public readonly Constituicao Con;
-            public readonly Inteligencia Int;
-            public readonly Sabedoria Sab;
-            public readonly Carisma Car;
-            public static Atributos GerarAtributos()
-            {
-                Rolagem rolagem = new Rolagem(D6, 3);
-                return new Atributos((uint)rolagem.Rolar(),
-                                     (uint)rolagem.Rolar(),
-                                     (uint)rolagem.Rolar(),
-                                     (uint)rolagem.Rolar(),
-                                     (uint)rolagem.Rolar(),
-                                     (uint)rolagem.Rolar());
-            }
+		enum TipoAtributo
+		{
+			 Forca,
+			 Destreza,
+			 Constituicao,
+			 Inteligencia,
+			 Sabedoria,
+			 Carisma
+		}
 
-            public Atributos(uint For, uint Con, uint Des, uint Int, uint Sab, uint Car)
-            {
-                this.For = new Forca(For);
-                this.Des = new Destreza(Des);
-                this.Con = new Constituicao(Con);
-                this.Int = new Inteligencia(Int);
-                this.Sab = new Sabedoria(Sab);
-                this.Car = new Carisma(Car);
-            }
-            public Atributos(Forca For, Constituicao Con, Destreza Des, Inteligencia Int, Sabedoria Sab, Carisma Car)
-            {
-                this.For = For ?? throw new ArgumentNullException(nameof(For));
-                this.Con = Con ?? throw new ArgumentNullException(nameof(Con));
-                this.Des = Des ?? throw new ArgumentNullException(nameof(Des));
-                this.Int = Int ?? throw new ArgumentNullException(nameof(Int));
-                this.Sab = Sab ?? throw new ArgumentNullException(nameof(Sab));
-                this.Car = Car ?? throw new ArgumentNullException(nameof(Car));
-            }
-            public static Atributos operator +(Atributos Atr, ModAtributo Mod)
-           => new Atributos(       (Forca)(Atr.For + Mod.For),
-                            (Constituicao)(Atr.Con + Mod.Con),
-                                (Destreza)(Atr.Des + Mod.Des),
-                            (Inteligencia)(Atr.Int + Mod.Int),
-                               (Sabedoria)(Atr.Sab + Mod.Sab),
-                                 (Carisma)(Atr.Car + Mod.Car));
-            public static Atributos operator -(Atributos Atr, ModAtributo Mod)
-           => new Atributos(       (Forca)(Atr.For - Mod.For),
-                            (Constituicao)(Atr.Con - Mod.Con),
-                                (Destreza)(Atr.Des - Mod.Des),
-                            (Inteligencia)(Atr.Int - Mod.Int),
-                               (Sabedoria)(Atr.Sab - Mod.Sab),
-                                 (Carisma)(Atr.Car - Mod.Car));
+		public struct Atributos
+		{
+			public readonly Atributo For, Des, Con, Int, Sab, Car;
+			public static Atributos GerarAtributos()
+			{
+				Rolagem rolagem = new Rolagem(D6, 3);
+				return new Atributos((uint)rolagem.Rolar(),
+									 (uint)rolagem.Rolar(),
+									 (uint)rolagem.Rolar(),
+									 (uint)rolagem.Rolar(),
+									 (uint)rolagem.Rolar(),
+									 (uint)rolagem.Rolar());
+			}
 
-        }
+			public Atributos(uint For, uint Con, uint Des, uint Int, uint Sab, uint Car)
+			{
+				this.For = new Atributo(For);
+				this.Des = new Atributo(Des);
+				this.Con = new Atributo(Con);
+				this.Int = new Atributo(Int);
+				this.Sab = new Atributo(Sab);
+				this.Car = new Atributo(Car);
+			}
+		}
 
-        public struct ModAtributo
-        {
-            public int For;
-            public int Des;
-            public int Con;
-            public int Int;
-            public int Sab;
-            public int Car;
-            public ModAtributo(int For = 0, int Con = 0, int Des = 0, int Int = 0, int Sab = 0, int Car = 0)
-            { 
-                this.For = For;
-                this.Des = Des;
-                this.Con = Con;
-                this.Int = Int;
-                this.Sab = Sab;
-                this.Car = Car; 
-            }
-        }
+		public record struct ModAtributo(int For = 0, int Con = 0, int Des = 0, int Int = 0, int Sab = 0, int Car = 0)
+		{
+			public static Atributos operator +(Atributos Atr, ModAtributo Mod)
+			  => new Atributos((uint)(Atr.For + Mod.For),
+							   (uint)(Atr.Con + Mod.Con),
+							   (uint)(Atr.Des + Mod.Des),
+							   (uint)(Atr.Int + Mod.Int),
+							   (uint)(Atr.Sab + Mod.Sab),
+							   (uint)(Atr.Car + Mod.Car));
+		}
 
-        public abstract class Atributo
-        {
-            public uint Valor { get; set; }
-            public int Ajuste => (int)Math.Floor((((int)Valor) - 10) / 2.0);
-            public Atributo(uint valor) => Valor = valor;
-            public override string ToString() => Valor.ToString();
-            public static implicit operator uint(Atributo d) => d.Valor;
-            public static Atributo operator -(Atributo a, int b)
-            { 
-                Atributo c = (Atributo)a?.MemberwiseClone()?? throw new ArgumentNullException(nameof(a));
-                c.Valor = (uint)(c.Valor - b);
-                return c;
-            }
-            public static Atributo operator +(Atributo a, int b)
-            {  
-                Atributo c = (Atributo)a?.MemberwiseClone() ?? throw new ArgumentNullException(nameof(a));
-                c.Valor = (uint)(c.Valor + b);
-                return c;
-            } 
-            protected Tabelas.LTabelaAtributos LinhaTabelaAtributo =>Tabelas.TabelaAtributos[Valor];
-        }
-        public class Forca : Atributo
-        {
-            public  (uint CargaLeve, uint CargaPesada, uint CargaMaxima) CapacidadeCarga
-            {
-                get
-                {
-                    var CapacidadeCarga = Tabelas.CapacidadeCarga[Valor];
-                    return CapacidadeCarga.Carga;
-                }
-            }
+		public class Atributo
 
-            public static DataTable Tabela; 
-            public Forca(uint valor) : base(valor) {}
-        }
+		{
+			public uint Valor { get; set; }
+			public int Ajuste => (int)Math.Floor(Valor/2.0) - 5;
+			public Atributo(uint valor) => Valor = valor;
+			public static implicit operator uint(Atributo d) => d.Valor;
+			public static implicit operator int(Atributo d) => (int)d.Valor;
+			public override string ToString() => Valor.ToString();
 
-        public class Destreza : Atributo
-        { 
-            
-            public int Arrombar => LinhaTabelaAtributo.Arrombar;
-            public int Armadilhas => (int)LinhaTabelaAtributo.Armadilhas;
-            public int Furtividade => (int)LinhaTabelaAtributo.FurtividadEPungar; 
-            public int Pungar => (int)LinhaTabelaAtributo.FurtividadEPungar; 
-            public Destreza(uint valor) : base(valor) { }
-        }
-        public class Constituicao : Atributo
-        {
-
-            public int ChanceRessureicao => (int)LinhaTabelaAtributo.ChanceRessureicao;
-            public Constituicao(uint valor) : base(valor) { }
-        }
-        public class Inteligencia : Atributo
-        {
-            public int IdiomasAdicionais => (int)LinhaTabelaAtributo.IdiomasAdicionais;
-            public int ChanceAprenderMagia => (int)LinhaTabelaAtributo.ChanceAprenderMagia;
-            public Inteligencia(uint valor) : base(valor) { }
-        }
-        public class Sabedoria : Atributo
-        {
-            public (int C1, int C2, int C3) MagiasAdicionais => ((int,int,int))LinhaTabelaAtributo.MagiasAdicionais;
-            public Sabedoria(uint valor) : base(valor) { }
-        }
-        public class Carisma : Atributo
-        {
-            public int NumeroMaxSeguidores => (int)LinhaTabelaAtributo.NumeroSeguidores;
-            public int AjusteReacao => (int)LinhaTabelaAtributo.AjusteReacao;
-            public Rolagem QtMortoVivoAfastado => (Rolagem)LinhaTabelaAtributo.QtMortoVivoAfastado;
-            public Carisma(uint valor) : base(valor) { }
-        }
-    }
+		}
+		
+	}
 }

@@ -1,18 +1,19 @@
 using System;
 using System.Diagnostics;
 using static OldDragon.Dado;
-using System.Data.SQLite;
 
 namespace OldDragon
 {
+	public record struct VlCarga (uint Leve,uint Pesada,uint Maxima);
+
 	public static class Tabelas
 	{
 		
-		class ConfigChaveIntervalo<TLinha> : ConfiguracaoTabela<uint,(uint Min, uint Max),TLinha> 
+		class ConfigChaveIntervalo<TLinha> : ConfiguracaoTabela<uint,MinMax,TLinha> 
 			where TLinha : ILinhaChaveIntervalo
 		{
 			
-			private bool DentroIntervalo(uint i, (uint Min,uint Max) Intervalo){
+			private bool DentroIntervalo(uint i, MinMax Intervalo){
 				return Intervalo.Min <= i &&  i <= Intervalo.Max;
 			} 
 			public override bool CompararChaveLinha(uint i, TLinha Linha)
@@ -27,65 +28,43 @@ namespace OldDragon
 					|| DentroIntervalo(B.key.Max, A.key);
 			}
 		} 
-		interface ILinhaChaveIntervalo : ILinhaTabela<(uint Min,uint Max)> {
+		public record struct MinMax (uint Min, uint Max);  
+		interface ILinhaChaveIntervalo : ILinhaTabela<MinMax> {
 
 		}
 		public static bool VerificaoCapacidadeCarga(uint i, LCapacidadeCarga Linha)
 		{  
-			return Linha.ForcaMin <= i && i <= Linha.ForcaMax  ;
+			return Linha.Forca.Min <= i && i <= Linha.Forca.Max  ;
 		}
 		
-		public struct  LTabelaAtributos  : ILinhaChaveIntervalo
+		public record struct LTabelaAtributos(
+			MinMax Atributo,
+			int Ajuste,
+			int Armadilhas,
+			int Arrombar,
+			int FurtividadEPungar,
+			int ChanceRessureicao,
+			int IdiomasAdicionais,
+			int ChanceAprenderMagia,
+			(uint C1, uint C2,uint C3) MagiasAdicionais,
+			int NumeroSeguidores,
+			int AjusteReacao,
+			Rolagem QtMortoVivoAfastado
+		)  : ILinhaChaveIntervalo
 		{
-			public (uint Min,uint Max) key => Atributo;
-			public (uint Min,uint Max) Atributo;
-			public int Ajuste;
-			public int Armadilhas;
-			public int Arrombar;
-			public int FurtividadEPungar;
-			public int ChanceRessureicao;
-			public int IdiomasAdicionais;
-			public int ChanceAprenderMagia;
-			public (uint C1, uint C2,uint C3) MagiasAdicionais;
-			public int NumeroSeguidores;
-			public int AjusteReacao;
-			public Rolagem QtMortoVivoAfastado;
-
-			public LTabelaAtributos((uint, uint) atributo, int ajuste, int armadilhas, int arrombar, int furtividadEPungar, int chanceRessureicao, int idiomasAdicionais, int chanceAprenderMagia, (uint C1, uint C2, uint C3) magiasAdicionais, int numeroSeguidores, int ajusteReacao, Rolagem qtMortoVivoAfastado)
-			{
-				Atributo = atributo;
-				Ajuste = ajuste;
-				Armadilhas = armadilhas;
-				Arrombar = arrombar;
-				FurtividadEPungar = furtividadEPungar;
-				ChanceRessureicao = chanceRessureicao;
-				IdiomasAdicionais = idiomasAdicionais;
-				ChanceAprenderMagia = chanceAprenderMagia;
-				MagiasAdicionais = magiasAdicionais;
-				NumeroSeguidores = numeroSeguidores;
-				AjusteReacao = ajusteReacao;
-				QtMortoVivoAfastado = qtMortoVivoAfastado;
-			}
+			public MinMax key => Atributo;
 		}
-		public struct LTabelaClasse : ILinhaTabela<uint>
+		public record struct LTabelaClasse (		
+			uint Nivel,
+			uint XP,
+			Rolagem DV,
+			(uint, uint) BA,
+			uint JP 
+		): ILinhaTabela<uint>
 		{
 			public uint key => Nivel;
-			public uint Nivel;
-			public uint XP;
-			public Rolagem DV;
-			public (uint, uint) BA;
-			public uint JP ;
-
-			public LTabelaClasse(uint nivel, uint XP, Rolagem DV, (uint, uint) BA, uint JP)
-			{
-				this.Nivel = nivel;
-				this.XP = XP;
-				this.DV = DV;
-				this.BA = BA;
-				this.JP = JP;
-			}
 		}
-		public static Tabela<uint,(uint,uint),LTabelaAtributos> TabelaAtributos;
+		public static Tabela<uint,MinMax,LTabelaAtributos> TabelaAtributos;
 		public static Tabela<uint,LTabelaClasse>  HomemDeArmas;
 		public static Tabela<uint,LTabelaClasse> Ladino;
 		public static Tabela<uint,LTabelaClasse> Clerigo;
@@ -104,39 +83,28 @@ namespace OldDragon
 				Circulos = circulos;
 			}
 		}
-        public struct LTalentosLadrao:ILinhaTabela<uint> { 
+        public record struct LTalentosLadrao ( 
+			uint Nivel,
+			(uint, Rolagem) Arrombar,
+			(uint, Rolagem) Armadilhas,
+			uint Escalar,
+			uint Furtividade,
+			uint Punga,
+			uint Percepção,
+			uint Ataquefurtivo
+		) : ILinhaTabela<uint>
+		{
 			public uint key => Nivel;
-			public uint Nivel;
-			public (uint, Rolagem) Arrombar, Armadilhas;
-			public uint Escalar,Furtividade,Punga, Percepção, Ataquefurtivo;
-
-			public LTalentosLadrao(uint nivel, (uint, Rolagem) arrombar, (uint, Rolagem) armadilhas, uint escalar, uint furtividade, uint punga, uint percepção, uint ataquefurtivo)
-			{
-				Nivel = nivel;
-				Arrombar = arrombar;
-				Armadilhas = armadilhas;
-				Escalar = escalar;
-				Furtividade = furtividade;
-				Punga = punga;
-				Percepção = percepção;
-				Ataquefurtivo = ataquefurtivo;
-			}
 		}
 		
-		public struct LCapacidadeCarga : ILinhaChaveIntervalo
+		public record struct LCapacidadeCarga (
+			MinMax Forca,
+			VlCarga Carga
+		) : ILinhaChaveIntervalo
 		{ 
-			public (uint Min,uint Max) key => (ForcaMin,ForcaMax);
-			public uint ForcaMin, ForcaMax;
-			public (uint Leve,uint Pesada,uint Maxima) Carga;
-
-			public LCapacidadeCarga(uint forcaMin, uint forcaMax, (uint Leve,uint Pesada,uint Maxima) carga)
-			{
-				ForcaMin = forcaMin;
-				ForcaMax = forcaMax;
-				Carga = carga;
-			}
+			public MinMax key => Forca;
 		} 
-		public struct LAfastarDadosvidaMortoVivo : ILinhaTabela<uint>{
+		public record struct LAfastarDadosvidaMortoVivo : ILinhaTabela<uint>{
 			public uint key => Nivel;
 			public uint Nivel;
 			public readonly int[] Dificudades;
@@ -149,25 +117,25 @@ namespace OldDragon
 				Dificudades = dificudades;
 			}
 		}
-		public static Tabela<uint,(uint,uint),LCapacidadeCarga> CapacidadeCarga;
+		public static Tabela<uint,MinMax,LCapacidadeCarga> TabelaCapacidadeCarga;
 		static Tabelas(){
 			var CorpoAtributos = new LTabelaAtributos[] 
 			{
-				new LTabelaAtributos(( 0, 1), -5, -25, -25, -25,  0, 0, 0,(0,0,0), 0,-25, new Rolagem(0, 0)),
-				new LTabelaAtributos(( 2, 3), -4, -20, -20, -20,  0, 0, 0,(0,0,0), 0,-20, new Rolagem(0, 0)),
-				new LTabelaAtributos(( 4, 5), -3, -15, -15, -15,  0, 0, 0,(0,0,0), 0,-15, new Rolagem(0, 0)),
-				new LTabelaAtributos(( 6, 7), -2, -10, -10, -10,  1, 0, 0,(0,0,0), 0,-10, new Rolagem(0, 0)),
-				new LTabelaAtributos(( 8, 9), -1,  -5,  -5,  -5,  5, 1, 5,(0,0,0), 0, -5, new Rolagem(1   )),
-				new LTabelaAtributos((10,11),  0,   0,   0,   0, 10, 1,10,(0,0,0), 1,  0, new Rolagem(D2  )),
-				new LTabelaAtributos((12,13), +1,   0,  +5,   0, 25, 1,20,(0,0,0), 2, +5, new Rolagem(D3  )),
-				new LTabelaAtributos((14,15), +2,   0, +10,  +5, 50, 1,25,(0,0,0), 3,+10, new Rolagem(D4  )),
-				new LTabelaAtributos((16,17), +3,  +5, +15, +10, 75, 2,35,(1,0,0), 4,+15, new Rolagem(D6  )),
-				new LTabelaAtributos((18,19), +4, +10, +20, +15, 95, 3,45,(2,0,0), 5,+20, new Rolagem(D8  )),
-				new LTabelaAtributos((20,21), +5, +15, +25, +20,100, 4,55,(2,1,0), 6,+25, new Rolagem(D4,2)),
-				new LTabelaAtributos((22,23), +6, +20, +30, +25,100, 5,65,(2,2,0), 7,+30, new Rolagem(D10 )),
-				new LTabelaAtributos((24,25), +7, +25, +35, +30,100, 6,75,(2,2,1), 8,+35, new Rolagem(D12 )),
-				new LTabelaAtributos((26,27), +8, +30, +40, +35,100, 7,85,(3,2,1), 9,+40, new Rolagem(D6,2)),
-				new LTabelaAtributos((28,29), +9, +35, +45, +40,100, 8,95,(3,3,1),10,+45, new Rolagem(D20 ))
+				new LTabelaAtributos(new( 0, 1), -5, -25, -25, -25,  0, 0, 0,(0,0,0), 0,-25, new Rolagem(0, 0)),
+				new LTabelaAtributos(new( 2, 3), -4, -20, -20, -20,  0, 0, 0,(0,0,0), 0,-20, new Rolagem(0, 0)),
+				new LTabelaAtributos(new( 4, 5), -3, -15, -15, -15,  0, 0, 0,(0,0,0), 0,-15, new Rolagem(0, 0)),
+				new LTabelaAtributos(new( 6, 7), -2, -10, -10, -10,  1, 0, 0,(0,0,0), 0,-10, new Rolagem(0, 0)),
+				new LTabelaAtributos(new( 8, 9), -1,  -5,  -5,  -5,  5, 1, 5,(0,0,0), 0, -5, new Rolagem(1   )),
+				new LTabelaAtributos(new(10,11),  0,   0,   0,   0, 10, 1,10,(0,0,0), 1,  0, new Rolagem(D2  )),
+				new LTabelaAtributos(new(12,13), +1,   0,  +5,   0, 25, 1,20,(0,0,0), 2, +5, new Rolagem(D3  )),
+				new LTabelaAtributos(new(14,15), +2,   0, +10,  +5, 50, 1,25,(0,0,0), 3,+10, new Rolagem(D4  )),
+				new LTabelaAtributos(new(16,17), +3,  +5, +15, +10, 75, 2,35,(1,0,0), 4,+15, new Rolagem(D6  )),
+				new LTabelaAtributos(new(18,19), +4, +10, +20, +15, 95, 3,45,(2,0,0), 5,+20, new Rolagem(D8  )),
+				new LTabelaAtributos(new(20,21), +5, +15, +25, +20,100, 4,55,(2,1,0), 6,+25, new Rolagem(D4,2)),
+				new LTabelaAtributos(new(22,23), +6, +20, +30, +25,100, 5,65,(2,2,0), 7,+30, new Rolagem(D10 )),
+				new LTabelaAtributos(new(24,25), +7, +25, +35, +30,100, 6,75,(2,2,1), 8,+35, new Rolagem(D12 )),
+				new LTabelaAtributos(new(26,27), +8, +30, +40, +35,100, 7,85,(3,2,1), 9,+40, new Rolagem(D6,2)),
+				new LTabelaAtributos(new(28,29), +9, +35, +45, +40,100, 8,95,(3,3,1),10,+45, new Rolagem(D20 ))
 			};
 			var CorpoHomemDeArmas = new LTabelaClasse[] {
 				new LTabelaClasse(1 ,       0, new Rolagem(D10, 1, 0), (+1 , 0), 16),
@@ -350,15 +318,15 @@ namespace OldDragon
 					new LTalentosLadrao(20, (80,new Rolagem(0,0,1)), (78,new Rolagem(0,0,1)), 99, 88, 88, 5,5),
 				};
 			var CorpoCapacidadeCarga = new LCapacidadeCarga[]{
-				new LCapacidadeCarga(0 ,3  , (10 , 20  , 30) ),
-				new LCapacidadeCarga(4 ,8  , (20 , 30  , 50) ),
-				new LCapacidadeCarga(9 ,12 , (30 , 50  , 70) ),
-				new LCapacidadeCarga(13,15 , (40 , 70  , 90) ),
-				new LCapacidadeCarga(16,17 , (50 , 80  , 100)),
-				new LCapacidadeCarga(18,20 , (60 , 100 , 120)),
-				new LCapacidadeCarga(21,22 , (90 , 130 , 150))
+				new LCapacidadeCarga(new(0 ,3)  , new(10 , 20  , 30) ),
+				new LCapacidadeCarga(new(4 ,8)  , new(20 , 30  , 50) ),
+				new LCapacidadeCarga(new(9 ,12) , new(30 , 50  , 70) ),
+				new LCapacidadeCarga(new(13,15) , new(40 , 70  , 90) ),
+				new LCapacidadeCarga(new(16,17) , new(50 , 80  , 100)),
+				new LCapacidadeCarga(new(18,20) , new(60 , 100 , 120)),
+				new LCapacidadeCarga(new(21,22) , new(90 , 130 , 150))
 			}; 
-			TabelaAtributos =  TabelaAtributos = new Tabela<uint,(uint Min,uint Max), LTabelaAtributos>( new ConfigChaveIntervalo<LTabelaAtributos>(), CorpoAtributos);
+			TabelaAtributos = new Tabela<uint,MinMax, LTabelaAtributos>( new ConfigChaveIntervalo<LTabelaAtributos>(), CorpoAtributos);
 			
 			HomemDeArmas 	= new Tabela<uint, LTabelaClasse>(CorpoHomemDeArmas);
 			Ladino 			= new Tabela<uint, LTabelaClasse>(CorpoLadino);
@@ -368,7 +336,7 @@ namespace OldDragon
 			MagiasMago 		= new Tabela<uint, LQtMagias>(CorpoMagiasMago);
 			AfastarDadosvidaMortoVivo = new Tabela<uint,LAfastarDadosvidaMortoVivo>(CorpoAfastarDadosvidaMortoVivo);
 			TalentosLadrao	= new Tabela<uint,LTalentosLadrao >(CorpoTalentosLadrao);
-			CapacidadeCarga	= new Tabela<uint,(uint,uint),LCapacidadeCarga>(new ConfigChaveIntervalo<LCapacidadeCarga>(),CorpoCapacidadeCarga);
+			TabelaCapacidadeCarga	= new Tabela<uint,MinMax,LCapacidadeCarga>(new ConfigChaveIntervalo<LCapacidadeCarga>(),CorpoCapacidadeCarga);
 		}
 	}	
 }
