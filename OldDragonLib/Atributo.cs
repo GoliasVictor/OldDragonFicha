@@ -102,20 +102,17 @@ namespace OldDragon
                 Atributo c = (Atributo)a?.MemberwiseClone() ?? throw new ArgumentNullException(nameof(a));
                 c.Valor = (uint)(c.Valor + b);
                 return c;
-            }
-            public static Tabela<int> TabelaAtributos; 
-            protected Dictionary<string,object> LinhaTabelaAtributo => TabelaAtributos[(int)Valor];
+            } 
+            protected Tabelas.LTabelaAtributos LinhaTabelaAtributo =>Tabelas.TabelaAtributos[Valor];
         }
         public class Forca : Atributo
         {
-            public  (int CargaLeve, int CargaPesada, int CargaMaxima)CapacidadeCarga
+            public  (uint CargaLeve, uint CargaPesada, uint CargaMaxima) CapacidadeCarga
             {
                 get
                 {
                     var CapacidadeCarga = Tabelas.CapacidadeCarga[Valor];
-                    return((int)CapacidadeCarga["CargaMaxima"],
-                           (int)CapacidadeCarga["CargaPesada"],
-                           (int)CapacidadeCarga["CargaLeve"]);
+                    return CapacidadeCarga.Carga;
                 }
             }
 
@@ -126,34 +123,34 @@ namespace OldDragon
         public class Destreza : Atributo
         { 
             
-            public int Arrombar => (int)LinhaTabelaAtributo["Arrombar"];
-            public int Armadilhas => (int)LinhaTabelaAtributo["Armadilhas"];
-            public int Furtividade => (int)LinhaTabelaAtributo["FurtividadEPungar"]; 
-            public int Pungar => (int)LinhaTabelaAtributo["FurtividadEPungar"]; 
+            public int Arrombar => LinhaTabelaAtributo.Arrombar;
+            public int Armadilhas => (int)LinhaTabelaAtributo.Armadilhas;
+            public int Furtividade => (int)LinhaTabelaAtributo.FurtividadEPungar; 
+            public int Pungar => (int)LinhaTabelaAtributo.FurtividadEPungar; 
             public Destreza(uint valor) : base(valor) { }
         }
         public class Constituicao : Atributo
         {
 
-            public int ChanceRessureicao => (int)LinhaTabelaAtributo["ChanceRessureicao"];
+            public int ChanceRessureicao => (int)LinhaTabelaAtributo.ChanceRessureicao;
             public Constituicao(uint valor) : base(valor) { }
         }
         public class Inteligencia : Atributo
         {
-            public int IdiomasAdicionais => (int)LinhaTabelaAtributo["IdiomasAdicionais"];
-            public int ChanceAprenderMagia => (int)LinhaTabelaAtributo["ChanceAprenderMagia"];
+            public int IdiomasAdicionais => (int)LinhaTabelaAtributo.IdiomasAdicionais;
+            public int ChanceAprenderMagia => (int)LinhaTabelaAtributo.ChanceAprenderMagia;
             public Inteligencia(uint valor) : base(valor) { }
         }
         public class Sabedoria : Atributo
         {
-            public (int C1, int C2, int C3) MagiasAdicionais => ((int,int,int))LinhaTabelaAtributo["MagiasAdicionais"];
+            public (int C1, int C2, int C3) MagiasAdicionais => ((int,int,int))LinhaTabelaAtributo.MagiasAdicionais;
             public Sabedoria(uint valor) : base(valor) { }
         }
         public class Carisma : Atributo
         {
-            public int NumeroMaxSeguidores => (int)LinhaTabelaAtributo["NumeroSeguidores"];
-            public int AjusteReacao => (int)LinhaTabelaAtributo["AjusteReacao"];
-            public Rolagem QtMortoVivoAfastado => (Rolagem)LinhaTabelaAtributo["QtMortoVivoAfastado"];
+            public int NumeroMaxSeguidores => (int)LinhaTabelaAtributo.NumeroSeguidores;
+            public int AjusteReacao => (int)LinhaTabelaAtributo.AjusteReacao;
+            public Rolagem QtMortoVivoAfastado => (Rolagem)LinhaTabelaAtributo.QtMortoVivoAfastado;
             public Carisma(uint valor) : base(valor) { }
         }
     }

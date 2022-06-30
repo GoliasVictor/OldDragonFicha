@@ -8,24 +8,21 @@ namespace OldDragon
 {
     public class Classe
     {
-        protected Tabela<uint> TabelaClasse = new Tabela<uint>(Tabelas.VerificaoNivel, new string[] { "Nivel", "XP", "DV", "BA", "JP" });
-        protected Dictionary<string, Tabela<uint>> OutrasTabelas = new Dictionary<string, Tabela<uint>>();
+        protected Tabela<uint, Tabelas.LTabelaClasse> TabelaClasse;
+        protected Dictionary<string, ITabela> OutrasTabelas = new Dictionary<string, ITabela>();
 
         public string Nome { get; }
-        public uint Nivel(uint Xp) => (uint)((int)(TabelaClasse.Procurar("Nivel", (Linha) => (int)Linha["XP"] > Xp)) - 1);
-        public uint Experiencia(uint Nivel) => (uint)(int)TabelaClasse[Nivel]["XP"];
-        public Rolagem DadoVida(uint Nivel) => (Rolagem)TabelaClasse[Nivel]["DV"];
-        public uint JogadaProtecao(uint Nivel) => (uint)(int)TabelaClasse[Nivel]["JP"];
-        public (uint BonusMaoPrincipal, uint BonusMaoSecundaria) BaseAtaque(uint Nivel) => ((uint, uint))((int, int))TabelaClasse[Nivel]["BA"];
-        public Dictionary<string, object> ObterDadosClasseNivel(uint Nivel)
+        public uint Nivel(uint Xp) => TabelaClasse.Primeiro((Linha) => Linha.XP > Xp).Nivel - 1;
+        public uint Experiencia(uint Nivel) => TabelaClasse[Nivel].XP;
+        public Rolagem DadoVida(uint Nivel) => TabelaClasse[Nivel].DV;
+        public uint JogadaProtecao(uint Nivel) => TabelaClasse[Nivel].JP;
+        public (uint MaoPrincipal, uint MaoSecundaria) BaseAtaque(uint Nivel) => TabelaClasse[Nivel].BA;
+        public Tabelas.LTabelaClasse ObterDadosClasseNivel(uint Nivel)
         {
-            Dictionary<string, object> DadosClasseNivel = TabelaClasse[Nivel];
-            foreach (var tabela in OutrasTabelas)
-                DadosClasseNivel = DadosClasseNivel.Concat(tabela.Value[Nivel])
-                                                   .ToDictionary((k) => k.Key, v => v.Value);
+            Tabelas.LTabelaClasse DadosClasseNivel = TabelaClasse[Nivel];
             return DadosClasseNivel;
         }
-        public Classe(string Nome, object[][] TabelaClasse, params (string Nome, Tabela<uint> tabela)[] OutrasTabelas)
+        public Classe(string Nome, Tabela<uint,Tabelas.LTabelaClasse> TabelaClasse, params (string Nome, ITabela tabela)[] OutrasTabelas)
         {
             if (string.IsNullOrWhiteSpace(Nome))
                 throw new ArgumentException("Nome em branco ou nulo", nameof(Nome));
@@ -34,7 +31,7 @@ namespace OldDragon
                 throw new ArgumentNullException(nameof(TabelaClasse));
 
             this.Nome = Nome;
-            this.TabelaClasse.InserirVariasLinhas(TabelaClasse);
+            this.TabelaClasse = TabelaClasse;
             foreach (var Tabela in OutrasTabelas)
                 this.OutrasTabelas.Add(Tabela.Nome, Tabela.tabela);
         } 
@@ -42,17 +39,17 @@ namespace OldDragon
     public static class Classes
     {
         public static readonly Classe HomemDeArmas = new Classe("HomemDeArmas", Tabelas.HomemDeArmas);
-        public static readonly Classe Ladino = new Classe("Ladino", Tabelas.Ladino, ("TalentosLadrao", Tabelas.TaletosLadrao));
+        public static readonly Classe Ladino = new Classe("Ladino", Tabelas.Ladino, ("TalentosLadrao", Tabelas.TalentosLadrao));
         public static readonly ClasseUsuariaMagia Clerigo = new ClasseUsuariaMagia("Clerigo", Tabelas.Clerigo, Tabelas.MagiasClerigo, ("AfastarDadosvidaMortoVivo", Tabelas.AfastarDadosvidaMortoVivo));
         public static readonly ClasseUsuariaMagia Mago = new ClasseUsuariaMagia("Mago", Tabelas.Mago, Tabelas.MagiasMago);
     }
     public class ClasseUsuariaMagia : Classe
     {
-        public uint[][] TabelaMagias;
-        public uint[] QuantideMagiaDia(uint Nivel) => TabelaMagias[Nivel - 1];
-        public uint QuantideMagiaDia(uint Nivel, uint Circulo) => TabelaMagias[Nivel - 1][Circulo - 1];
+        public Tabela<uint, Tabelas.LQtMagias> TabelaMagias;
+        public Tabelas.LQtMagias QuantideMagiaDia(uint Nivel) => TabelaMagias[Nivel - 1];
+        public uint QuantideMagiaDia(uint Nivel, uint C) => TabelaMagias[Nivel - 1].Circulos[C - 1];
 
-        public ClasseUsuariaMagia(string Nome, object[][] TabelaClasse, uint[][] TabelaMagias, params (string Nome, Tabela<uint> tabela)[] OutrasTabelas)
+        public ClasseUsuariaMagia(string Nome, Tabela<uint,Tabelas.LTabelaClasse> TabelaClasse,Tabela<uint, Tabelas.LQtMagias> TabelaMagias, params (string Nome, ITabela tabela)[] OutrasTabelas)
             : base(Nome, TabelaClasse, OutrasTabelas)
         {
             this.TabelaMagias = TabelaMagias ?? throw new ArgumentNullException(nameof(TabelaMagias));

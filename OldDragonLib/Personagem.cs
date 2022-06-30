@@ -21,7 +21,7 @@ namespace OldDragon
 		public Dado DV => Classe.DadoVida(Nivel).Dado;
 		public int PV => DadosVida + Atributos.Con.Ajuste;
 		public uint JP => Classe.JogadaProtecao(Nivel);
-		public (uint BonusMaoPrincipal, uint BonusMaoSecundaria) BA => Classe.BaseAtaque(Nivel);
+		public (uint MaoPrincipal, uint MaoSecundaria) BA => Classe.BaseAtaque(Nivel);
 		public Atributos Atributos { 
 			get => AtributosBase + Raca.ModAtributos; 
 			set => AtributosBase = value - Raca.ModAtributos; 
@@ -93,7 +93,7 @@ namespace OldDragon
 	{
 		ICriadorDePersonagem AdicionarItens(IEnumerable<Item> itens);
 		ICriadorDePersonagem DefinirAlinhamento(Alinhamento alinhamento);
-		ICriadorDePersonagem DefinirAtributos(Atributos? atributos = null);
+		ICriadorDePersonagem DefinirAtributos(Atributos atributos);
 		ICriadorDePersonagem DefinirClasse(Classe classe);
 		ICriadorDePersonagem DefinirExperiencia(uint XP);
 		ICriadorDePersonagem DefinirInventario(Inventario inventario);
@@ -106,21 +106,19 @@ namespace OldDragon
 	public class CriadorDePersonagem : ICriadorDePersonagem
 	{
 		Personagem personagem;
-		bool AtributosDefinidos;
-		bool AlinhamentoDefinido;
-		bool DadosVidaDefinido;
-
+		Atributos? atributos;
+		int? DadosVida;
+		Alinhamento? Alinhamento;
 		public Personagem FinalizarPersonagem()
 		{
 
-			_ = personagem.Classe 	?? throw new PersonagemNaoTerminadoException("Classe não definida");
-			_ = personagem.Raca 	?? throw new PersonagemNaoTerminadoException("Raça não definida");
-			_ = !AlinhamentoDefinido?  throw new PersonagemNaoTerminadoException("Alinhamento não definido") : 0;
-			
-			if (!AtributosDefinidos)
-				personagem.Atributos = Atributos.GerarAtributos();
-			if (!DadosVidaDefinido)
-				personagem.DadosVida = personagem.Classe.DadoVida(personagem.Nivel).Rolar();
+			_ = personagem.Classe	?? throw new PersonagemNaoTerminadoException("Classe não definida");
+			_ = personagem.Raca		?? throw new PersonagemNaoTerminadoException("Raça não definida");
+			_ = Alinhamento			?? throw new PersonagemNaoTerminadoException("Alinhamento não definido");
+
+			personagem.Alinhamento  = Alinhamento.Value;
+			personagem.Atributos = atributos ?? Atributos.GerarAtributos();
+			personagem.DadosVida = DadosVida ?? personagem.Classe.DadoVida(personagem.Nivel).Rolar();
 
 			return personagem;
 		}
@@ -147,15 +145,13 @@ namespace OldDragon
 
 		public ICriadorDePersonagem DefinirAlinhamento(Alinhamento alinhamento)
 		{
-			personagem.Alinhamento = alinhamento;
-			AlinhamentoDefinido = true;
+			Alinhamento = alinhamento; 
 			return this;
 		}
 
-		public ICriadorDePersonagem DefinirAtributos(Atributos? atributos = null)
+		public ICriadorDePersonagem DefinirAtributos(Atributos atributos)
 		{
-			personagem.AtributosBase = atributos ?? Atributos.GerarAtributos();
-			AtributosDefinidos = true;
+			this.atributos = atributos;
 			return this;
 		}
 

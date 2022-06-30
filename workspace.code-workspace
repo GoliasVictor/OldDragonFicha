@@ -1,0 +1,30 @@
+{
+	"folders": [
+		{
+			"name": "Console",
+			"path": "./OldDragonConsole"
+		},
+		{
+			"name": "Lib",
+			"path": "./OldDragonLib"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.exclude": {
+			//".vscode": true,       
+			//"bin": true,       
+			//"obj": true,       
+			//"*.csproj": true,       
+		},
+		"nuxt.isNuxtApp": false
+	},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+
+		]
+	}
+}
